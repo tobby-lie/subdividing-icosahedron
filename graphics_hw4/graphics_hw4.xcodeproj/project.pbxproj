@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E30C01BD243D8D0F00A5B1FE /* trackball.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E30C01BB243D8D0F00A5B1FE /* trackball.cpp */; };
 		E34A7ECD243BBDD6008B1DC8 /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E34A7ECC243BBDD6008B1DC8 /* main.cpp */; };
 		E34A7ED5243BBDE9008B1DC8 /* OpenGL.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E34A7ED4243BBDE9008B1DC8 /* OpenGL.framework */; };
 		E34A7ED7243BBDEF008B1DC8 /* GLUT.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E34A7ED6243BBDEF008B1DC8 /* GLUT.framework */; };
@@ -26,6 +27,8 @@
 
 /* Begin PBXFileReference section */
 		E30C01BA243D872700A5B1FE /* ReadMe.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = ReadMe.txt; sourceTree = "<group>"; };
+		E30C01BB243D8D0F00A5B1FE /* trackball.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = trackball.cpp; sourceTree = "<group>"; };
+		E30C01BC243D8D0F00A5B1FE /* trackball.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = trackball.h; sourceTree = "<group>"; };
 		E34A7EC9243BBDD6008B1DC8 /* graphics_hw4 */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = graphics_hw4; sourceTree = BUILT_PRODUCTS_DIR; };
 		E34A7ECC243BBDD6008B1DC8 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		E34A7ED4243BBDE9008B1DC8 /* OpenGL.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGL.framework; path = System/Library/Frameworks/OpenGL.framework; sourceTree = SDKROOT; };
@@ -66,6 +69,8 @@
 			isa = PBXGroup;
 			children = (
 				E34A7ECC243BBDD6008B1DC8 /* main.cpp */,
+				E30C01BB243D8D0F00A5B1FE /* trackball.cpp */,
+				E30C01BC243D8D0F00A5B1FE /* trackball.h */,
 				E30C01BA243D872700A5B1FE /* ReadMe.txt */,
 			);
 			path = graphics_hw4;
@@ -137,6 +142,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E30C01BD243D8D0F00A5B1FE /* trackball.cpp in Sources */,
 				E34A7ECD243BBDD6008B1DC8 /* main.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

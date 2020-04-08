@@ -12,15 +12,27 @@
 #include <tuple>
 #include <vector>
 
+#include "trackball.h"
+
 #include <iostream>
 
 #define X 0.525731112119133696
 #define Z 0.850650808352039932
 
-static float elevation, swing = 0.0; // variables for elevation and swing
 std::vector<float> up_vector = {0, 1, 0}; // up vector for glulookat
 static bool dragging = false; // flag for dragging mouse if left mouse button pressed down
-static float prev_mousex, prev_mousey = 0.0; // variables for last position of mouse coordinates before motion registered
+
+GLfloat angle = -150;   /* in degrees */
+GLboolean doubleBuffer = GL_TRUE, iconic = GL_FALSE, keepAspect = GL_FALSE;
+int spinning = 0, moving = 0;
+int beginx, beginy;
+int W = 300, H = 300;
+float curquat[4];
+float lastquat[4];
+GLdouble bodyWidth = 3.0;
+int newModel = 1;
+int scaling;
+float scalefactor = 1.0;
 
 /* vertex data array */
 static GLfloat vdata[12][3] =
@@ -246,106 +258,20 @@ void mouse (int button, int state, int x, int y)
 {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) // if left mouse button held down, we are dragging
     {
+        spinning = 0;
+        glutIdleFunc(NULL);
+        moving = 1;
+        beginx = x;
+        beginy = y;
+        
         dragging = true;
-        prev_mousex = float(x); // reassign previous x and y
-        prev_mousey = float(y);
     }
     else if(button == GLUT_LEFT_BUTTON && state == GLUT_UP) //  if left moues button released, we are not dragging
     {
+        moving = 0;
         dragging = false;
     }
 } // end mouse
-
-/*
-    Function: motion
- 
-    Description: Handles logic for motion of mouse.
- 
-    Parameters: int mousex, int mousey
- 
-    Pre-Conditions: None
- 
-    Post-Conditions: Update swing and elevation based on mouse motion.
- 
-    Returns: Nothing
-*/
-void motion (int mousex, int mousey)
-{
-    if (dragging) // if mouse is dragging then update swing and elevation accordingly
-    {
-        glEnable(GL_COLOR_LOGIC_OP); // set GL_COLOR_LOGIC_OP for XOR
-        
-        // we take the difference of x and previous x and etc in order to provide gradual rate of rotation
-        if (prev_mousex > mousex)
-        {
-            swing = fmod((swing - (float(mousex) - prev_mousex)), 360.0); // fmod to allow modulus for floats
-            glutPostRedisplay();
-        }
-        if (prev_mousex < mousex)
-        {
-            swing = fmod((swing - (float(mousex) - prev_mousex)), 360.0);
-            glutPostRedisplay();
-        }
-        if (prev_mousey > mousey)
-        {
-            elevation = fmod((elevation - (float(mousey) - prev_mousey)), 360.0);
-            glutPostRedisplay();
-        }
-        if (prev_mousey < mousey)
-        {
-            elevation = fmod((elevation + (prev_mousey - float(mousey))), 360.0);
-            glutPostRedisplay();
-        }
-        prev_mousex = float(mousex); // update previous x and y
-        prev_mousey = float(mousey);
-        
-        glDisable(GL_COLOR_LOGIC_OP); // disable XOR
-    }
-    
-    glFlush();
-} // end motion
-
-/*
-    Function: display
- 
-    Description: Handles logic for display callback.
- 
-    Parameters: None
- 
-    Pre-Conditions: None
- 
-    Post-Conditions: Updates display based on set states.
- 
-    Returns: Nothing
-*/
-void display(void)
-{
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    glMatrixMode(GL_MODELVIEW);
-    glLoadIdentity();
-
-    gluLookAt(0.0, 0.0, 5.0, 0, 0, -1, 0, 1, 0); // set gluLookAt to a fixed distance
-
-    glRotatef(elevation, -1, 0, 0); // rotate based on elevation
-    glRotatef(swing, 0, -1, 0); // rotate based on swing
-    
-    std::cout << "elevation: " << elevation << std::endl;
-    std::cout << "swing: " << swing << std::endl;
-    
-    // for 20 faces of icosphere
-    for (int i = 0; i < 20; i++)
-    {
-        // subdivide
-        subdivide(&vdata[tindices[i][0]][0],
-                  &vdata[tindices[i][1]][0],
-                  &vdata[tindices[i][2]][0],
-                  subdiv);
-    } // end for
-
-    glFlush();
-    glutSwapBuffers();
-} // end display
 
 /*
     Function: frame_buffer_coordinates
@@ -371,6 +297,93 @@ std::tuple<GLint, GLint> frame_buffer_coordinates()
     
     return std::make_tuple(fbWidth, fbHeight);
 } // end frame_buffer_coordinates
+
+void
+animate(void)
+{
+  add_quats(lastquat, curquat, curquat);
+  newModel = 1;
+  glutPostRedisplay();
+}
+
+/*
+    Function: motion
+ 
+    Description: Handles logic for motion of mouse.
+ 
+    Parameters: int mousex, int mousey
+ 
+    Pre-Conditions: None
+ 
+    Post-Conditions: Update swing and elevation based on mouse motion.
+ 
+    Returns: Nothing
+*/
+void motion (int mousex, int mousey)
+{
+    if (dragging) // if mouse is dragging then update swing and elevation accordingly
+    {
+        GLint fbWidth;
+        GLint fbHeight;
+        std::tie(fbWidth, fbHeight) = frame_buffer_coordinates();
+        
+        trackball(lastquat,
+        (2.0 * beginx - fbWidth) / fbWidth,
+        (fbHeight - 2.0 * beginy) / fbHeight,
+        (2.0 * mousex - fbWidth) / fbWidth,
+        (fbHeight - 2.0 * mousey) / fbHeight
+        );
+        beginx = mousex;
+        beginy = mousey;
+        spinning = 1;
+        glutIdleFunc(animate);
+    }
+} // end motion
+
+/*
+    Function: display
+ 
+    Description: Handles logic for display callback.
+ 
+    Parameters: None
+ 
+    Pre-Conditions: None
+ 
+    Post-Conditions: Updates display based on set states.
+ 
+    Returns: Nothing
+*/
+void display(void)
+{
+    if(newModel)
+    {
+        GLfloat m[4][4];
+        
+        glPopMatrix();
+        glPushMatrix();
+        build_rotmatrix(m, curquat);
+        
+        glMultMatrixf(&m[0][0]);
+        
+        newModel = 0;
+    }
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+    
+    // for 20 faces of icosphere
+    for (int i = 0; i < 20; i++)
+    {
+        // subdivide
+        subdivide(&vdata[tindices[i][0]][0],
+                  &vdata[tindices[i][1]][0],
+                  &vdata[tindices[i][2]][0],
+                  subdiv);
+    } // end for
+
+    glutSwapBuffers();
+} // end display
+
+
 
 /*
     Function: reshape
@@ -571,17 +584,31 @@ void left_light_toggle(int id)
     glutPostRedisplay();
 } // end left_light_toggle
 
+void
+vis(int visible)
+{
+  if (visible == GLUT_VISIBLE) {
+    if (spinning)
+      glutIdleFunc(animate);
+  } else {
+    if (spinning)
+      glutIdleFunc(NULL);
+  }
+}
+
 int main(int argc, char **argv)
 {
     // create window
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH); /* single buffering */
+    trackball(curquat, 0.0, 0.0, 0.0, 0.0);
     glutInitWindowSize(500, 500);
     glutCreateWindow("Subdivide");
 
     // set callbacks
     glutReshapeFunc(reshape);
     glutDisplayFunc(display);
+    glutVisibilityFunc(vis);
     glutMouseFunc(mouse);
     glutMotionFunc(motion);
 
@@ -614,6 +641,8 @@ int main(int argc, char **argv)
     glutAddSubMenu("Toggle Left Light", left_light_menu);
     glutAddMenuEntry("Quit", 666);
     glutAttachMenu(GLUT_RIGHT_BUTTON);
+    
+    gluLookAt(0.0, 0.0, 10.0, 0, 0, 0, 0, 1, 0);
 
     glEnable(GL_LIGHTING); // enable lighting
     glEnable(GL_LIGHT0); // enable light 0
