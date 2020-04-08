@@ -328,10 +328,10 @@ void motion (int mousex, int mousey)
         std::tie(fbWidth, fbHeight) = frame_buffer_coordinates();
         
         trackball(lastquat,
-        (2.0 * beginx - fbWidth) / fbWidth,
-        (fbHeight - 2.0 * beginy) / fbHeight,
-        (2.0 * mousex - fbWidth) / fbWidth,
-        (fbHeight - 2.0 * mousey) / fbHeight
+        (5.0 * beginx - fbWidth) / fbWidth,
+        (fbHeight - 5.0 * beginy) / fbHeight,
+        (5.0 * mousex - fbWidth) / fbWidth,
+        (fbHeight - 5.0 * mousey) / fbHeight
         );
         beginx = mousex;
         beginy = mousey;
