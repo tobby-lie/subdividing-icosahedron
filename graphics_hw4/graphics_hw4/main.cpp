@@ -39,17 +39,17 @@ static int tindices[20][3] =
     {10,1,6}, {11,0,9}, {2,11,9}, {5,2,9}, {11,2,7}
 };
 
-GLfloat mat_specular[] = {0.633, 0.727811, 0.633}; // specular property of material
-GLfloat mat_diffuse[] = {0.78, 0.57, 0.11, 1.0}; // diffuse property of material
-GLfloat mat_ambient[] = {0.33, 0.22, 0.03, 1.0}; // ambient property of material
+GLfloat mat_specular[] = {0.633, 0.633, 0.633}; // specular property of material
+GLfloat mat_diffuse[] = {0.9, 0.9, 0.9, 1.0}; // diffuse property of material
+GLfloat mat_ambient[] = {1.0, 0.1, 0.1, 1.0}; // ambient property of material
 GLfloat mat_shininess = 100; // shininess of material
 
-GLfloat light_ambient[] = {0.0, 0.05, 0.05, 1.0}; // ambient property of light 1
-GLfloat light_diffuse[] = {0.0, 0.5, 0.5, 1.0}; // diffuse property of light 1
+GLfloat light_ambient[] = {0.0, 0.05, 0.0, 1.0}; // ambient property of light 1
+GLfloat light_diffuse[] = {0.0, 1.0, 0.0, 1.0}; // diffuse property of light 1
 GLfloat light_specular[] = {1.0, 1.0, 1.0, 1.0}; // specular property of light 1
 
-GLfloat light_ambient2[] = {0.05, 0.05, 0.0, 1.0}; // ambient property of light 2
-GLfloat light_diffuse2[] = {0.5, 0.5, 0.0, 1.0}; // diffuse property of light 2
+GLfloat light_ambient2[] = {0.0, 0.0, 0.5, 1.0}; // ambient property of light 2
+GLfloat light_diffuse2[] = {0.0, 0.0, 1.0, 1.0}; // diffuse property of light 2
 GLfloat light_specular2[] = {1.0, 1.0, 1.0, 1.0}; // diffuse property of light 2
 
 GLfloat light_position[] = {3.5, 0.6, 1.3, 0.0}; // position of light 1
