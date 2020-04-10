@@ -14,8 +14,6 @@
 
 #include "trackball.h"
 
-#include <iostream>
-
 #define X 0.525731112119133696
 #define Z 0.850650808352039932
 

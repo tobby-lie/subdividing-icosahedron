@@ -9,7 +9,9 @@
 *    graphics_hw4:
 *       main.cpp - All functions for
 *           program contained within this file.
-*       graphics_hw4.xcodeproj - Xcode project file
+*       trackball.h - Header file for trackball code
+*       trackball.cpp - Code for trackball functionality
+*    graphics_hw4.xcodeproj - Xcode project file
 *           that can run program.
 *  Functional organization:
 *       frame_buffer_coordinates - Gets frame buffer
@@ -19,9 +21,21 @@
 *       display - Handles logic for display callback.
 *       reshape - Handles logic for reshaping window.
 *       init - Handles initialization.
+*       normalize - normalizes vectors.
+*       normalized_cross_product - performs cross
+*           product and normalizes result.
+*       normalized face - creates normalized faces.
+*       draw_flat_triangle - draws triangle in flat
+*           shading mode.
+*       draw_triangle_smooth - draws triangle in
+*           smooth shading mode.
+*       subdivide - subdivides triangles based on
+*           provided depth.
+*       animate - animates rotation based on quaternions.
 *  Controls:
-*       Mouse drag - Rotates object along swing and
-*           elevation.
+*       Mouse drag - Rotates object based on quaternions.
+*           Can drag and hold as well as release and object
+*           will continue spinning.
 *  Drop down menu:
 *       Smooth shading - Enables smooth shading.
 *       Flat shading - Enables flat shading.
